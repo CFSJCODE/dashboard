@@ -71,7 +71,7 @@
         <!-- Cabeçalho do Dashboard -->
         <div class="mb-8">
             <h1 class="text-3xl font-bold text-gray-800">Dashboard de Feedback da Oficina</h1>
-            <p class="text-gray-500 mt-1">Análise dos resultados da pesquisa</p>
+            <p class="text-gray-500 mt-1">Análise de 25 respostas da ficha de avaliação</p>
         </div>
 
         <!-- Conteúdo Principal em Grade -->
@@ -82,36 +82,36 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Dados da pesquisa
+            // Dados da pesquisa com 25 respostas
             const surveyData = {
                 clarity: {
                     title: "O conteúdo foi claro e fácil de entender?",
                     type: 'donut',
-                    values: { 'Sim': 4, 'Mais ou menos': 0, 'Não': 0 },
+                    values: { 'Sim': 15, 'Mais ou menos': 7, 'Não': 3 },
                     colors: { 'Sim': '#10B981', 'Mais ou menos': '#F59E0B', 'Não': '#EF4444' }
                 },
                 engagement: {
                     title: "Você se sentiu envolvido(a) durante a oficina?",
                     type: 'donut',
-                    values: { 'Sim': 4, 'Mais ou menos': 0, 'Não': 0 },
+                    values: { 'Sim': 16, 'Mais ou menos': 6, 'Não': 3 },
                     colors: { 'Sim': '#10B981', 'Mais ou menos': '#F59E0B', 'Não': '#EF4444' }
                 },
                 learning: {
                     title: "Você conseguiu aprender algo novo?",
                     type: 'donut',
-                    values: { 'Sim': 3, 'Mais ou menos': 1, 'Não': 0 },
+                    values: { 'Sim': 14, 'Mais ou menos': 8, 'Não': 3 },
                     colors: { 'Sim': '#10B981', 'Mais ou menos': '#F59E0B', 'Não': '#EF4444' }
                 },
                 rating: {
                     title: "Classifique a oficina de 1 a 5",
                     type: 'bar',
-                    values: { 'Nota 5': 2, 'Nota 4': 2, 'Nota 3': 0, 'Nota 2': 0, 'Nota 1': 0 },
+                    values: { 'Nota 5': 12, 'Nota 4': 8, 'Nota 3': 3, 'Nota 2': 1, 'Nota 1': 1 },
                     colors: { 'Nota 5': '#10B981', 'Nota 4': '#34D399', 'Nota 3': '#FBBF24', 'Nota 2': '#F87171', 'Nota 1': '#EF4444' }
                 },
                 future: {
                     title: "Gostaria de participar de outras oficinas?",
                     type: 'donut',
-                    values: { 'Sim': 4, 'Talvez': 0, 'Não': 0 },
+                    values: { 'Sim': 17, 'Talvez': 6, 'Não': 2 },
                     colors: { 'Sim': '#3B82F6', 'Talvez': '#F59E0B', 'Não': '#EF4444' }
                 }
             };
@@ -192,19 +192,19 @@
             function createBarChart(item, total) {
                 const barItems = [];
                 for (const [label, value] of Object.entries(item.values)) {
-                     const percentage = total > 0 ? (value / total) * 100 : 0;
-                     const color = item.colors[label];
-                     barItems.push(`
-                        <div class="w-full">
-                            <div class="flex justify-between mb-1 text-sm">
-                                <span class="text-gray-600">${label}</span>
-                                <span class="font-semibold text-gray-800">${value} (${percentage.toFixed(0)}%)</span>
-                            </div>
-                            <div class="bar-bg w-full h-4">
-                                <div class="bar-fill" style="width: ${percentage}%; background-color: ${color};"></div>
-                            </div>
-                        </div>
-                     `);
+                       const percentage = total > 0 ? (value / total) * 100 : 0;
+                       const color = item.colors[label];
+                       barItems.push(`
+                           <div class="w-full">
+                               <div class="flex justify-between mb-1 text-sm">
+                                   <span class="text-gray-600">${label}</span>
+                                   <span class="font-semibold text-gray-800">${value} (${percentage.toFixed(0)}%)</span>
+                               </div>
+                               <div class="bar-bg w-full h-4">
+                                   <div class="bar-fill" style="width: ${percentage}%; background-color: ${color};"></div>
+                               </div>
+                           </div>
+                       `);
                 }
                 return `
                     <div class="w-full bar-chart-container flex flex-col space-y-3">
