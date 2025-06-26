@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Feedback da Oficina</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+        }
+        .donut-chart {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            transition: all 0.3s ease-in-out;
+        }
+        .donut-hole {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90px;
+            height: 90px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+        }
+        .total-value {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        .total-label {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+        .bar-chart-container .bar-bg {
+            background-color: #e5e7eb;
+            border-radius: 0.375rem;
+            overflow: hidden;
+        }
+        .bar-chart-container .bar-fill {
+            height: 100%;
+            border-radius: 0.375rem;
+            transition: width 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-6 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Cabeçalho do Dashboard -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">Dashboard de Feedback da Oficina</h1>
+            <p class="text-gray-500 mt-1">Análise dos resultados da pesquisa</p>
+        </div>
+
+        <!-- Conteúdo Principal em Grade -->
+        <div id="dashboard-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Os cards dos gráficos serão inseridos aqui pelo JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Dados da pesquisa
+            const surveyData = {
+                clarity: {
+                    title: "O conteúdo foi claro e fácil de entender?",
+                    type: 'donut',
+                    values: { 'Sim': 4, 'Mais ou menos': 0, 'Não': 0 },
+                    colors: { 'Sim': '#10B981', 'Mais ou menos': '#F59E0B', 'Não': '#EF4444' }
+                },
+                engagement: {
+                    title: "Você se sentiu envolvido(a) durante a oficina?",
+                    type: 'donut',
+                    values: { 'Sim': 4, 'Mais ou menos': 0, 'Não': 0 },
+                    colors: { 'Sim': '#10B981', 'Mais ou menos': '#F59E0B', 'Não': '#EF4444' }
+                },
+                learning: {
+                    title: "Você conseguiu aprender algo novo?",
+                    type: 'donut',
+                    values: { 'Sim': 3, 'Mais ou menos': 1, 'Não': 0 },
+                    colors: { 'Sim': '#10B981', 'Mais ou menos': '#F59E0B', 'Não': '#EF4444' }
+                },
+                rating: {
+                    title: "Classifique a oficina de 1 a 5",
+                    type: 'bar',
+                    values: { 'Nota 5': 2, 'Nota 4': 2, 'Nota 3': 0, 'Nota 2': 0, 'Nota 1': 0 },
+                    colors: { 'Nota 5': '#10B981', 'Nota 4': '#34D399', 'Nota 3': '#FBBF24', 'Nota 2': '#F87171', 'Nota 1': '#EF4444' }
+                },
+                future: {
+                    title: "Gostaria de participar de outras oficinas?",
+                    type: 'donut',
+                    values: { 'Sim': 4, 'Talvez': 0, 'Não': 0 },
+                    colors: { 'Sim': '#3B82F6', 'Talvez': '#F59E0B', 'Não': '#EF4444' }
+                }
+            };
+
+            const grid = document.getElementById('dashboard-grid');
+
+            // Função para criar e popular os gráficos
+            function createCharts() {
+                for (const key in surveyData) {
+                    const item = surveyData[key];
+                    const total = Object.values(item.values).reduce((a, b) => a + b, 0);
+
+                    const card = document.createElement('div');
+                    card.className = 'card p-6 flex flex-col';
+
+                    let chartHtml = '';
+                    if (item.type === 'donut') {
+                        chartHtml = createDonutChart(item, total);
+                    } else if (item.type === 'bar') {
+                        chartHtml = createBarChart(item, total);
+                    }
+
+                    card.innerHTML = `
+                        <h2 class="text-lg font-semibold text-gray-700 mb-4 h-14">${item.title}</h2>
+                        <div class="flex-grow flex items-center justify-center">
+                            ${chartHtml}
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                }
+            }
+
+            // Função para criar HTML de um gráfico de rosca
+            function createDonutChart(item, total) {
+                let gradientString = '';
+                let currentPercentage = 0;
+                const legendItems = [];
+
+                for (const [label, value] of Object.entries(item.values)) {
+                    const percentage = total > 0 ? (value / total) * 100 : 0;
+                    const color = item.colors[label];
+                    
+                    if (percentage > 0) {
+                        gradientString += `${color} ${currentPercentage}% ${currentPercentage + percentage}%, `;
+                    }
+                    currentPercentage += percentage;
+
+                    legendItems.push(`
+                        <div class="flex items-center">
+                            <span class="h-3 w-3 rounded-full mr-2" style="background-color: ${color};"></span>
+                            <div class="flex justify-between w-full text-sm">
+                                <span class="text-gray-600">${label}</span>
+                                <span class="font-semibold text-gray-800">${value} (${percentage.toFixed(0)}%)</span>
+                            </div>
+                        </div>
+                    `);
+                }
+                gradientString = gradientString.slice(0, -2); // Remove a última vírgula e espaço
+
+                return `
+                    <div class="flex flex-col md:flex-row items-center justify-center gap-6 w-full">
+                        <div class="flex-shrink-0">
+                            <div class="donut-chart" style="background: conic-gradient(${gradientString});">
+                                <div class="donut-hole">
+                                    <span class="total-value">${total}</span>
+                                    <span class="total-label">Respostas</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col space-y-2 w-full">
+                            ${legendItems.join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Função para criar HTML de um gráfico de barras
+            function createBarChart(item, total) {
+                const barItems = [];
+                for (const [label, value] of Object.entries(item.values)) {
+                     const percentage = total > 0 ? (value / total) * 100 : 0;
+                     const color = item.colors[label];
+                     barItems.push(`
+                        <div class="w-full">
+                            <div class="flex justify-between mb-1 text-sm">
+                                <span class="text-gray-600">${label}</span>
+                                <span class="font-semibold text-gray-800">${value} (${percentage.toFixed(0)}%)</span>
+                            </div>
+                            <div class="bar-bg w-full h-4">
+                                <div class="bar-fill" style="width: ${percentage}%; background-color: ${color};"></div>
+                            </div>
+                        </div>
+                     `);
+                }
+                return `
+                    <div class="w-full bar-chart-container flex flex-col space-y-3">
+                        ${barItems.join('')}
+                    </div>
+                `;
+            }
+
+            createCharts();
+        });
+    </script>
+</body>
+</html>
